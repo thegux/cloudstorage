@@ -43,8 +43,8 @@ public class SignUpController {
 
 
         if (signUpError == null) {
-            RedirectView redirectView = new RedirectView("/login", true);
             redirectAttributes.addFlashAttribute("success", true);
+            RedirectView redirectView = new RedirectView("/login", true);
             return redirectView;
         } else {
             RedirectView redirectView = new RedirectView("/signup", true);
