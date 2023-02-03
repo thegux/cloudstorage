@@ -134,14 +134,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="credential : ${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <button type="button" class="btn btn-success" th:attr="onclick=|showCredentialModal('${credential.getCredentialid()}', '${credential.getUrl()}', '${credential.getUsername()}', '${credential.getPassword()}')|">Edit</button>
+                                        <a th:href="@{/removeCredential(credentialid=${credential.credentialid})}"  class="btn btn-danger">Delete</a>
                                     </td>
-                                    <th scope="row">Example Credential URL</th>
-                                    <td>Example Credential Username</td>
-                                    <td>Example Credential Password</td>
+                                    <th th:text="${credential.url}" scope="row">Example Credential URL</th>
+                                    <td th:text="${credential.username}">Example Credential Username</td>
+                                    <td th:text="${credential.password}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -157,7 +157,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form id="credentialForm" action="#" th:action="@{/addCredential}" method="POST">
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="credential-url" class="col-form-label">URL</label>
@@ -192,25 +192,41 @@
 
         <!--For opening the note modal-->
         <script type="text/javascript">
-            // For opening the note modal
-            function showNoteModal(noteId, noteTitle, noteDescription) {
-                $('#note-id').val(noteId ? noteId : '');
-                $('#note-title').val(noteTitle ? noteTitle : '');
-                $('#note-description').val(noteDescription ? noteDescription : '');
-                $('#noteModal').modal('show');
-                if(noteId) {
-                    $('#noteForm').attr("action", `/updateNote?noteId=${noteId}`)
-                }
+        // For opening the credentials modal
+        function showCredentialModal(credentialId, url, username, password) {
+            if(credentialId) {
+                fetch(`http://localhost:8086/getDecryptedCredential?credentialid=${credentialId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success == "true") {
+                            $('#credential-password').val(data.decryptedPassword);
+                        }
+                    });
+                $('#credentialForm').attr("action", `/updateCredential?credentialid=${credentialId}`)
+            } else {
+                $('#credential-password').val(password ? password : '');
             }
 
-            // For opening the credentials modal
-            function showCredentialModal(credentialId, url, username, password) {
-                $('#credential-id').val(credentialId ? credentialId : '');
-                $('#credential-url').val(url ? url : '');
-                $('#credential-username').val(username ? username : '');
-                $('#credential-password').val(password ? password : '');
-                $('#credentialModal').modal('show');
+            $('#credential-id').val(credentialId ? credentialId : '');
+            $('#credential-url').val(url ? url : '');
+            $('#credential-username').val(username ? username : '');
+            $('#credentialModal').modal('show');
+
+
+        }
+
+        // For opening the note modal
+        function showNoteModal(noteId, noteTitle, noteDescription) {
+            $('#note-id').val(noteId ? noteId : '');
+            $('#note-title').val(noteTitle ? noteTitle : '');
+            $('#note-description').val(noteDescription ? noteDescription : '');
+            $('#noteModal').modal('show');
+            if(noteId) {
+                $('#noteForm').attr("action", `/updateNote?noteId=${noteId}`)
             }
+        }
+
+
         </script>
     </body>
 </html>

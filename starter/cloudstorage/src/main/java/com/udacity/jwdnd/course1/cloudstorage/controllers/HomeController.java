@@ -32,36 +32,6 @@ public class HomeController {
         return "home";
     }
 
-    @PostMapping("/addNote")
-    public String addNote(NoteForm noteForm, Model model) {
-        User authUser = authHelper.getAuthUser(userService);
 
-        Note note = new Note(null, noteForm.getNoteTitle(), noteForm.getNoteDescription(), authUser.getUserid());
-
-        this.noteService.addNote(note);
-        noteForm.clearForm();
-        model.addAttribute("notes", this.noteService.getNoteList(authUser.getUserid()));
-        return "home";
-    }
-
-    @PostMapping("/updateNote")
-    public String updateNote(@RequestParam("noteId") Integer noteId, NoteForm noteForm, Model model) {
-        User authUser = authHelper.getAuthUser(userService);
-
-        Note note = new Note(noteId, noteForm.getNoteTitle(), noteForm.getNoteDescription(), authUser.getUserid());
-
-        this.noteService.updateNote(note);
-        noteForm.clearForm();
-        model.addAttribute("notes", this.noteService.getNoteList(authUser.getUserid()));
-        return "home";
-    }
-
-    @GetMapping("/removeNote")
-    public String removeNote(@RequestParam("noteId") Integer noteId, Model model) {
-        User authUser = authHelper.getAuthUser(userService);
-        this.noteService.removeNote(noteId);
-        model.addAttribute("notes", this.noteService.getNoteList(authUser.getUserid()));
-        return "home";
-    }
 
 }
